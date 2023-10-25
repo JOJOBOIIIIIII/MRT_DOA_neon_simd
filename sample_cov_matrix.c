@@ -6,12 +6,17 @@
 //Could be done simpler/shorter with blas, because it can add operators and constant to matrices when multiplying, in one line
 
 
-double main(){
+double main(int argc, char* argv[]){
+	
+	int do_print=1;
+	if (argc > 1) { //if an argument is passed, dont print (for the python script)
+        	do_print=0;
+    	}
 
 	clock_t start_time,end_time;
 	double elapsed_time;
 
-	printf("Computing the covariance matrix...\n");
+	if (do_print) printf("Computing the covariance matrix...\n");
 	
 	start_time=clock();
 
@@ -79,7 +84,9 @@ double main(){
 	end_time=clock();
 	elapsed_time = (double)(end_time - start_time) / CLOCKS_PER_SEC;
 
-	//Print the matrix
+	//Print the matrix if do_print is true
+	
+	if (do_print){
 	printf("Matrix result:\n");
 	for (int i = 0; i < num_samples; i++) {
     		for (int j = 0; j < num_samples; j++) {
@@ -95,7 +102,15 @@ double main(){
 	}
 	
 	printf("\nElapsed time: %f seconds\n", elapsed_time);
-	return elapsed_time;
+	} //end of do_print if
+
+	FILE* file = fopen("times.txt","a");
+	if (file == NULL) return 1;
+	fprintf(file,"%lf\n",elapsed_time);
+	fclose(file);
+
+
+	return 0;
 
 }
 

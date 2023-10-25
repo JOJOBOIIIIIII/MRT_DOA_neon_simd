@@ -1,4 +1,4 @@
-CC = gcc
+CC = gcc -O3
 CFLAGS = -Wall -I/usr/local/include
 LDFLAGS = -L/usr/local/lib
 LIBS = -lgsl -lgslcblas -lm
