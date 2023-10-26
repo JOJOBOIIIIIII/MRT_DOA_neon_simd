@@ -47,8 +47,8 @@ double main(int argc, char* argv[]){
 	//Set the values in the martix accoring to the samples in the array
 	for (int i = 0; i < num_samples; i++) {
      	   for (int j = 0; j < data_per_sample; j++) {
-		double re = samples_re[i * 5 + j]; 
-        	double im = samples_im[i * 5 + j];
+		double re = samples_re[i * num_samples + j]; 
+        	double im = samples_im[i * num_samples + j];
 		gsl_matrix_set(matrix_sample_re, i, j, re);
         	gsl_matrix_set(matrix_sample_im, i, j, im);        	
 	   }
