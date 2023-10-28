@@ -3,8 +3,6 @@
 #include <gsl/gsl_blas.h>
 #include <time.h>
 
-//Could be done simpler/shorter with blas, because it can add operators and constant to matrices when multiplying, in one line
-
 
 double main(int argc, char* argv[]){
 	
@@ -53,28 +51,27 @@ double main(int argc, char* argv[]){
         	gsl_matrix_set(matrix_sample_im, i, j, im);        	
 	   }
     	}
-
-	gsl_matrix* matrix_hermit_re = gsl_matrix_alloc(data_per_sample,num_samples); //switch dimensions 
-	gsl_matrix_transpose_memcpy(matrix_hermit_re, matrix_sample_re); // Transpose real part
-
-	gsl_matrix* matrix_hermit_im = gsl_matrix_alloc(data_per_sample,num_samples); //switch dimensions
-	gsl_matrix_transpose_memcpy(matrix_hermit_im, matrix_sample_im); //Transpose imaginary part
-	gsl_matrix_scale(matrix_hermit_im, -1); //Flip sign imaginary part
-
-	// d: type double, ge: general , mm: matrix multiplication. Result stored in 'C' (last argument)
+	printf("size re and im array:  %d,%d\n", sizeof(samples_re) / sizeof(samples_re[0]),sizeof(samples_im) / sizeof(samples_im[0]));
+	printf("Will init results\n");
 	gsl_matrix* result_re = gsl_matrix_alloc(num_samples,num_samples); 
-	gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1, matrix_sample_re,matrix_hermit_re,0,result_re);
-
-	//                                        subtract                             from previous
-	gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, -1, matrix_sample_im,matrix_hermit_im,1,result_re);
-	
-
-
 	gsl_matrix* result_im = gsl_matrix_alloc(num_samples,num_samples);
-	gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1, matrix_sample_re,matrix_hermit_im,0,result_im);
+
+	printf("init done\n");
+	// d: type double, ge: general , mm: matrix multiplication. Result stored in 'C' (last argument)
+	//
+	//
+	//             Real        hermitian of real  add                                  result not initialized, dont add it
+	gsl_blas_dgemm(CblasNoTrans, CblasConjTrans, 1, matrix_sample_re,matrix_sample_re,0,result_re);
+	printf("first mm done\n");
+	//               Im      Hermitian of im   subtract                             from previous results
+	gsl_blas_dgemm(CblasNoTrans, CblasConjTrans, 1, matrix_sample_im,matrix_sample_im,1,result_re);
 	
-	//                                        add                             to previous
-	gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1, matrix_sample_im,matrix_hermit_re,1,result_im);
+	printf("WORKS\n");
+	//                real      hermitian of im                    			  dont add: result not initialized
+	gsl_blas_dgemm(CblasNoTrans, CblasConjTrans, -1, matrix_sample_re,matrix_sample_im,0,result_im);
+	
+	//                 im    hermitian of real  add                                to previous result
+	gsl_blas_dgemm(CblasNoTrans, CblasConjTrans, 1, matrix_sample_im,matrix_sample_re,1,result_im);
 		
 	//Divide results by n: number of samples
 	double scale = 1./data_per_sample;

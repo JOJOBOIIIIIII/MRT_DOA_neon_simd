@@ -14,8 +14,10 @@ TARGET_ftree = sample_cov_ftree
 TARGET_autovectorize_ftree = sample_cov_autovectorize_ftree
 TARGET_neon = sample_cov_neon
 TARGET_autovectorize_no_ftree = sample_cov_autovectorize_no_ftree
+TARGET_blas_debug = sample_cov_debug
 
 #---------------------------------------------------------------------------
+debug: $(TARGET_blas_debug)
 
 non-neon: $(TARGET) $(TARGET_autovectorize_ftree) $(TARGET_ftree) $(TARGET_autovectorize_no_ftree)
 
@@ -35,8 +37,10 @@ $(TARGET_autovectorize_no_ftree): $(OBJ)
 
 
 $(TARGET_neon): $(OBJ2)
-	$(CC) $(LDFLAGS) $^ $(LIBS) -o $@
+	$(CC)  $(LDFLAGS) $^ $(LIBS) -o $@
 
+$(TARGET_blas_debug): $(OBJ)
+	gcc -g3 $(LDFLAGS) $^ $(LIBS) -o $@	
 #---------------------------------------------------------------------------
 
 %.o: %.c
