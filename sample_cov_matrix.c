@@ -2,7 +2,8 @@
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_blas.h>
 #include <time.h>
-
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
 
 double main(int argc, char* argv[]){
 	
@@ -15,11 +16,15 @@ double main(int argc, char* argv[]){
 	double elapsed_time;
 
 	if (do_print) printf("Computing the covariance matrix...\n");
-	
-	start_time=clock();
+		
+		//GSL random number generator
+		gsl_rng_env_setup();
+		const gsl_rng_type *T = gsl_rng_default;
+		gsl_rng *r = gsl_rng_alloc(T);
+
 
 	int num_samples=5;
-	int data_per_sample=129;
+	int data_per_sample=2048;
 /*
 	double samples_re[] = { 0,0,3,0,0,
 				0,0,0,0,-2,
@@ -45,28 +50,24 @@ double main(int argc, char* argv[]){
 	//Set the values in the martix accoring to the samples in the array
 	for (int i = 0; i < num_samples; i++) {
      	   for (int j = 0; j < data_per_sample; j++) {
-		double re = samples_re[i * num_samples + j]; 
-        	double im = samples_im[i * num_samples + j];
-		gsl_matrix_set(matrix_sample_re, i, j, re);
-        	gsl_matrix_set(matrix_sample_im, i, j, im);        	
+				double random_value = gsl_ran_flat(r, -5000, 5000);
+				 gsl_matrix_set(matrix_sample_re, i, j, random_value);
+				random_value = gsl_ran_flat(r,-5000 , 5000);
+				 gsl_matrix_set(matrix_sample_im, i, j, random_value);
 	   }
     	}
-	printf("size re and im array:  %d,%d\n", sizeof(samples_re) / sizeof(samples_re[0]),sizeof(samples_im) / sizeof(samples_im[0]));
-	printf("Will init results\n");
 	gsl_matrix* result_re = gsl_matrix_alloc(num_samples,num_samples); 
 	gsl_matrix* result_im = gsl_matrix_alloc(num_samples,num_samples);
 
-	printf("init done\n");
+	start_time=clock();
 	// d: type double, ge: general , mm: matrix multiplication. Result stored in 'C' (last argument)
 	//
 	//
 	//             Real        hermitian of real  add                                  result not initialized, dont add it
 	gsl_blas_dgemm(CblasNoTrans, CblasConjTrans, 1, matrix_sample_re,matrix_sample_re,0,result_re);
-	printf("first mm done\n");
 	//               Im      Hermitian of im   subtract                             from previous results
 	gsl_blas_dgemm(CblasNoTrans, CblasConjTrans, 1, matrix_sample_im,matrix_sample_im,1,result_re);
 	
-	printf("WORKS\n");
 	//                real      hermitian of im                    			  dont add: result not initialized
 	gsl_blas_dgemm(CblasNoTrans, CblasConjTrans, -1, matrix_sample_re,matrix_sample_im,0,result_im);
 	
