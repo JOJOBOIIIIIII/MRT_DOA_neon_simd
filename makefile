@@ -4,7 +4,7 @@ LDFLAGS = -L/usr/local/lib
 LIBS = -lgsl -lgslcblas -lm
 
 SRC = sample_cov_matrix.c
-SRC_neon=NEON_sample_cov_matrix.c
+SRC_neon=./neon/neon_test.c
 
 OBJ = $(SRC:.c=.o)
 OBJ_neon = $(SRC_neon:.c=.o)
@@ -36,8 +36,8 @@ $(TARGET_autovectorize_no_ftree): $(OBJ)
 	$(CC) -mfpu=neon $(LDFLAGS) $^ $(LIBS) -o $@
 
 
-$(TARGET_neon): $(OBJ2)
-	$(CC)  $(LDFLAGS) $^ $(LIBS) -o $@
+$(TARGET_neon): $(OBJ_neon)
+	$(CC)  $(LDFLAGS) $^ $(LIBS) -lNE10 -mfpu=neon -o $@
 
 $(TARGET_blas_debug): $(OBJ)
 	gcc -g3 $(LDFLAGS) $^ $(LIBS) -o $@	
