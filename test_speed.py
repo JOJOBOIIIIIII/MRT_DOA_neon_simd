@@ -27,7 +27,6 @@ try:
             with open("times.txt", "r") as file:
                 for line in file:
                     arr[i]=float(line.strip())
-
         av=np.mean(arr)
         average_times.append( av )
         index+=1

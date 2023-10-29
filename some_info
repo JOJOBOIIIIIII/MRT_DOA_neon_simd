@@ -4,3 +4,4 @@ maybe 8 bits or 16 bits. can test with 32 bits
 
 with just blas, it takes ~0.5 ms. Still no improvement with other compiler flags
 switching to 5 by 2048 : ~1.12 ms, compiler flags change nothing
+weirdly it only works when doing many samples. (doing it one time will yield ~2ms)
