@@ -39,7 +39,7 @@ $(TARGET_autovectorize_no_ftree): $(OBJ)
 #missing dot product test for now
 
 $(TARGET_NEON): $(OBJ_neon)
-	$(CC)  $(LDFLAGS) $^ $(LIBS) -lNE10 -mfpu=neon -o $@
+	$(CC)  $(LDFLAGS) $^ -lm -lNE10 -mfpu=neon -o $@
 
 $(TARGET_blas_debug): $(OBJ)
 	gcc -g3 $(LDFLAGS) $^ $(LIBS) -o $@	

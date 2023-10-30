@@ -1,6 +1,12 @@
-0.85 ms for everything (5 by 129) matrix
+
+homework: ~0.3ms for a (5 by 129) matrix
+
+Real project:
+0.85 ms for everything (5 by 2048)  matrix
 5 by 2048 matrix
 maybe 8 bits or 16 bits. can test with 32 bits
+
+
 
 oct 2?:
 with just blas, it takes ~0.5 ms. Still no improvement with other compiler flags
@@ -15,3 +21,8 @@ ne10 types can be accessed like regular structs (vector4f.x = 5)
 
 using ne10 c function for 2560 vector dot product: 0.05 ms
 with ne10 neon function : 0.025 ms
+
+Real part of covariance matrix done:
+0.1716 ms for a 5 by 2048 matrix
+Still need to compute the imaginary part, can expect ~2x increase
+
