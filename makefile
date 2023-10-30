@@ -4,7 +4,7 @@ LDFLAGS = -L/usr/local/lib
 LIBS = -lgsl -lgslcblas -lm
 
 SRC = sample_cov_matrix.c
-SRC_neon=./neon/neon_test.c
+SRC_neon=./neon/NEON_sample_cov_matrix.c
 
 OBJ = $(SRC:.c=.o)
 OBJ_neon = $(SRC_neon:.c=.o)
@@ -12,9 +12,10 @@ OBJ_neon = $(SRC_neon:.c=.o)
 TARGET = sample_cov_base
 TARGET_ftree = sample_cov_ftree
 TARGET_autovectorize_ftree = sample_cov_autovectorize_ftree
-TARGET_neon = sample_cov_neon
+TARGET_dot_product_test = ./neon/dot_product_neon_test
 TARGET_autovectorize_no_ftree = sample_cov_autovectorize_no_ftree
 TARGET_blas_debug = sample_cov_debug
+TARGET_NEON= ./neon/NEON_sample_cov
 
 #---------------------------------------------------------------------------
 debug: $(TARGET_blas_debug)
@@ -35,8 +36,9 @@ $(TARGET_autovectorize_ftree): $(OBJ)
 $(TARGET_autovectorize_no_ftree): $(OBJ)
 	$(CC) -mfpu=neon $(LDFLAGS) $^ $(LIBS) -o $@
 
+#missing dot product test for now
 
-$(TARGET_neon): $(OBJ_neon)
+$(TARGET_NEON): $(OBJ_neon)
 	$(CC)  $(LDFLAGS) $^ $(LIBS) -lNE10 -mfpu=neon -o $@
 
 $(TARGET_blas_debug): $(OBJ)

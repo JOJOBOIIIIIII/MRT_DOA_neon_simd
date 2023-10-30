@@ -8,12 +8,13 @@ with open("times.txt","w") as file:
     file.write("")
 
 # Define the path to the C binary you want to execute
-binary_paths = ["./sample_cov_base","./sample_cov_ftree","./sample_cov_autovectorize_ftree","./sample_cov_autovectorize_no_ftree"]  # Replace with the actual path to your C binary
+#binary_paths = ["./sample_cov_base","./sample_cov_ftree","./sample_cov_autovectorize_ftree","./sample_cov_autovectorize_no_ftree"]  # Replace with the actual path to your C binary
 
-if (len(sys.argv) != 1+1):
+if (len(sys.argv) < 2):
     print("Need to pass argument")
     exit()
 test_range=int(sys.argv[1])
+binary_paths = sys.argv[2:]
 
 
 average_times=[]
