@@ -25,8 +25,8 @@ int main (){
 		ne10_vec4f_t matrix_re[rows][vec_columns];
 		ne10_vec4f_t matrix_im[rows][vec_columns];
 
-		ne10_float32_t result_re[rows][rows];
-		ne10_float32_t result_im[rows][rows];
+		float result_re[rows][rows];
+		float result_im[rows][rows];
 
 		//each entry contains an array of results of vector dot products
 		ne10_float32_t temp_matrix_1[rows][rows][vec_columns]; 
@@ -44,18 +44,10 @@ int main (){
 		start_time = clock();
 		//Computing the real part of the matrix
 		//Compute the dot product between every pair of row (0,0 0,1 0,2 0,3 0,4    1,1 1,2 1,3 1,4   2,2 2,3 2,4 )
-		ne10_float32_t sum=0;
+		float sum=0;
 		for (int i=0;i<rows;i++) {
 				for (int j = i;j<rows;j++){
 								
-
-						if (i==0 && j ==4){
-								for (int a =0;a<vec_columns;a++){
-										printf("%f\n", matrix_im[i][a].y);
-
-								}
-						
-						}
 						//Calculate pair of the real matrix
 						ne10_dot_vec4f_neon(temp_matrix_1[i][j], matrix_re[i], matrix_re[j], vec_columns);
 
@@ -69,13 +61,20 @@ int main (){
 						//for (int k=0;k < log4_vec ;k++){	}
 						//add up every 'sub' dot product result to get the final dot product
 						for (int k=0;k<vec_columns;k++){
+								if (i==0 && j==1) {printf("%d,%d | 1: %f  2: %f\n",i,j,temp_matrix_2[i][j][k], temp_matrix_1[i][j][k]);
+								
+								printf("\nsum: %f \n",sum);}
+								
 								sum+=temp_matrix_1[i][j][k];
 								sum+=temp_matrix_2[i][j][k];
 						}
 						sum /= columns; //divide by n samples
+
+						printf("sum: %f\n",sum);
 						result_re[i][j]=sum;
+						printf("sum in arr: %f\n",result_re[i][j]);
 						//diagonally symmetrical
-						if (i!=j) result_re[i][j] = result_re[j][i]; 
+						if (i!=j) result_re[j][i] = result_re[i][j]; 
 				}
 				
 				//Computing the imaginary part of the matrix
@@ -88,16 +87,18 @@ int main (){
 								for (int k=0;k<vec_columns;k++){
 										sum+=temp_matrix_1[i][j][k];
 								}
-								sum /= rows; //divide by n samples
+								sum /= columns; //divide by n samples
 								result_im[i][j] = sum;
+								if ((i==0 && j ==1) ||(i==1 && j == 0  ) ) printf("sum im: %f\n",result_im[i][j]);
 						}
 				}
+		}
+		for (int i = 0;i<rows;i++){ 
 				for (int j= i+1; j<rows ;j++){ //loop through upper triangle only (exclude diagonal)
 						result_im[i][j] -= result_im[j][i]; //result upper triangle = upper triangle - transpose of the lower triangle 
 						result_im[j][i] = -result_im[i][j]; //result lower triangle = negative transpose of upper triangle
 				}
 		}
-		
 		
 		end_time= clock();
 		time = ((double)(end_time - start_time)) / CLOCKS_PER_SEC; neon_time += time;
@@ -109,7 +110,7 @@ int main (){
 
 		for (int i=0;i<rows;i++){
 				for (int j=0;j<rows;j++){
-						printf("%e\t",result_re[i][j]);
+						printf("%.2f  %.2f i\t",result_re[i][j],result_im[i][j]);
 				
 				}	
 				printf("\n\n");
@@ -122,12 +123,6 @@ int main (){
 		return 0;
 }
  
-
-
-
-
-
-
 
 int init_rand_vector(ne10_vec4f_t* v){
 		v->x = rand() % 10 - 5 ;
@@ -144,7 +139,7 @@ int arr_to_vec4(ne10_float32_t* arr,int size){
 		printf("t");
 		for (int i=0; i< size/2; i++){
 				
-				//maybe later, see if it's after
+				//maybe later, see if it's faster
 
 		}
 		
