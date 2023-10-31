@@ -15,7 +15,7 @@ int main (){
 		const int vec_columns=columns/4; 
 		const double log4_vec = log(vec_columns) / log(4); // Avoids using recursion if using 'arr_to_vec4' method
 
-		const int n = 100000; //how many times to run the test
+		const int n = 1; //how many times to run the test
 		
 		double neon_time=0;
 		clock_t start_time,end_time;
@@ -32,7 +32,6 @@ int main (){
 		ne10_float32_t temp_matrix_1[rows][rows][vec_columns]; 
 		ne10_float32_t temp_matrix_2[rows][rows][vec_columns]; 
 
-
 		//Fills the components of each vector in the matrix with a random number (should be samples from antennas)
 		for (int i=0;i<rows;i++){
 				for (int j=0;j<vec_columns;j++){
@@ -48,12 +47,12 @@ int main (){
 		ne10_float32_t sum=0;
 		for (int i=0;i<rows;i++) {
 				for (int j = i;j<rows;j++){
-						//Calculate pair for real matrix
+						//Calculate pair of the real matrix
 						ne10_dot_vec4f_neon(temp_matrix_1[i][j], matrix_re[i], matrix_re[j], vec_columns);
 
-						//Calculate pair for imaginary matrix
+						//Calculate pairs of the imaginary matrix
 						ne10_dot_vec4f_neon(temp_matrix_2[i][j], matrix_im[i], matrix_im[j], vec_columns);
-						
+				
 						//Add both dot products. 
 						//ne10_add_vec4f_neon(temp_matrix_1[i][j], temp_matrix_1[i][j], temp_matrix_2[i][j], vec_columns)
 
@@ -68,6 +67,25 @@ int main (){
 						result_re[i][j]=sum;
 						//diagonally symmetrical
 						if (i!=j) result_re[i][j] = result_re[j][i]; 
+				}
+				
+				//Computing the imaginary part of the matrix
+				for (int j = 0 ; j<rows; j++){ 
+						if (i==j) result_im[i][j]=0; //diagonal is 0 for imaginary part
+						else {
+								//Calculate pairs of imaginary matrix and real matrix (effectively   V_im dot (V_real)^T   )
+								ne10_dot_vec4f_neon( temp_matrix_1[i][j], matrix_re[i], matrix_im[j],vec_columns);
+						
+								for (int k=0;k<vec_columns;k++){
+										sum+=temp_matrix_1[i][j][k];
+								}
+								sum /= rows; //divide by n samples
+								result_im[i][j] = sum;
+						}
+				}
+				for (int j= i+1; j<rows ;j++){ //loop through upper triangle only (exclude diagonal)
+						result_im[i][j] -= result_im[j][i]; //result upper triangle = upper triangle - transpose of the lower triangle 
+						result_im[j][i] = -result_im[i][j]; //result lower triangle = negative transpose of upper triangle
 				}
 		}
 		
@@ -107,6 +125,8 @@ int init_rand_vector(ne10_vec4f_t* v){
 		v->y = rand()% 1000 - 500;
 		v->z = rand()% 1000 - 500;
 		v->w = rand()% 1000 - 500;
+
+		printf("%f\n",v->x);
 		return 0;
 }
 
