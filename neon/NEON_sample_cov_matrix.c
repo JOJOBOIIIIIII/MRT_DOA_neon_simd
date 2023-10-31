@@ -47,6 +47,15 @@ int main (){
 		ne10_float32_t sum=0;
 		for (int i=0;i<rows;i++) {
 				for (int j = i;j<rows;j++){
+								
+
+						if (i==0 && j ==4){
+								for (int a =0;a<vec_columns;a++){
+										printf("%f\n", matrix_im[i][a].y);
+
+								}
+						
+						}
 						//Calculate pair of the real matrix
 						ne10_dot_vec4f_neon(temp_matrix_1[i][j], matrix_re[i], matrix_re[j], vec_columns);
 
@@ -63,7 +72,7 @@ int main (){
 								sum+=temp_matrix_1[i][j][k];
 								sum+=temp_matrix_2[i][j][k];
 						}
-						sum /= rows; //divide by n samples
+						sum /= columns; //divide by n samples
 						result_re[i][j]=sum;
 						//diagonally symmetrical
 						if (i!=j) result_re[i][j] = result_re[j][i]; 
@@ -121,12 +130,11 @@ int main (){
 
 
 int init_rand_vector(ne10_vec4f_t* v){
-		v->x = rand() % 1000 - 500 ;
-		v->y = rand()% 1000 - 500;
-		v->z = rand()% 1000 - 500;
-		v->w = rand()% 1000 - 500;
+		v->x = rand() % 10 - 5 ;
+		v->y = rand()% 10 - 5;
+		v->z = rand()% 10 - 5;
+		v->w = rand()% 10 - 5;
 
-		printf("%f\n",v->x);
 		return 0;
 }
 
