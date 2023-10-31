@@ -15,7 +15,7 @@ int main (){
 		const int vec_columns=columns/4; 
 		const double log4_vec = log(vec_columns) / log(4); // Avoids using recursion if using 'arr_to_vec4' method
 
-		const int n = 1; //how many times to run the test
+		const int n = 10000; //how many times to run the test
 		
 		double neon_time=0;
 		clock_t start_time,end_time;
@@ -61,18 +61,13 @@ int main (){
 						//for (int k=0;k < log4_vec ;k++){	}
 						//add up every 'sub' dot product result to get the final dot product
 						for (int k=0;k<vec_columns;k++){
-								if (i==0 && j==1) {printf("%d,%d | 1: %f  2: %f\n",i,j,temp_matrix_2[i][j][k], temp_matrix_1[i][j][k]);
-								
-								printf("\nsum: %f \n",sum);}
 								
 								sum+=temp_matrix_1[i][j][k];
 								sum+=temp_matrix_2[i][j][k];
 						}
 						sum /= columns; //divide by n samples
 
-						printf("sum: %f\n",sum);
 						result_re[i][j]=sum;
-						printf("sum in arr: %f\n",result_re[i][j]);
 						//diagonally symmetrical
 						if (i!=j) result_re[j][i] = result_re[i][j]; 
 				}
@@ -89,7 +84,6 @@ int main (){
 								}
 								sum /= columns; //divide by n samples
 								result_im[i][j] = sum;
-								if ((i==0 && j ==1) ||(i==1 && j == 0  ) ) printf("sum im: %f\n",result_im[i][j]);
 						}
 				}
 		}
