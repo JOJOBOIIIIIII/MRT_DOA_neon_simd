@@ -26,3 +26,10 @@ Real part of covariance matrix done:
 0.1716 ms for a 5 by 2048 matrix
 Still need to compute the imaginary part, can expect ~2x increase
 
+Nov 22:
+The code can compile in C++ while using C libraries!
+Also, the compiler flags are extremely important. 
+Normal compilation of NEON_sample_cov_martix.c : 0.77 ms
+With the flag -O3: 0.3 ms! (what im using since the beginning anyway)
+With -Ofast : Also 0.3 ms
+Other flags make no improvements: pgo, lto, ftree-vectorize, funroll-loops, march-native, ffast-math

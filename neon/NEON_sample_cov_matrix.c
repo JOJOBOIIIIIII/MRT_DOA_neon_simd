@@ -1,8 +1,19 @@
+
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <ne10/NE10.h>
 #include <stdio.h>
 #include <time.h>
 #include <math.h>
 #include <stdlib.h>
+
+#ifdef __cplusplus
+}
+#endif
+
 
 
 int init_rand_vector(ne10_vec4f_t*);
